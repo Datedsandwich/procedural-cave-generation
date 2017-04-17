@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MapGenerator : MonoBehaviour {
     public int width;
@@ -12,7 +9,11 @@ public class MapGenerator : MonoBehaviour {
 
     [Range(0, 100)]
 	public int randomFillPercent;
-	int[,] map;
+    public int smoothingPasses;
+	public int[,] map;
+
+    private const int EMPTY = 0;
+    private const int WALL = 1;
 
     void Start() {
         GenerateMap();
@@ -21,6 +22,9 @@ public class MapGenerator : MonoBehaviour {
     void GenerateMap() {
         map = new int[width, height];
         RandomFillMap();
+        for(int i = 0; i < smoothingPasses; i++) {
+            SmoothMap();
+        }
     }
 
     void RandomFillMap() {
@@ -32,9 +36,45 @@ public class MapGenerator : MonoBehaviour {
 
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
-                map[x, y] = randomNumberGenerator.Next(0, 100) < randomFillPercent ? 1 : 0;
+                if(x == 0 || x == width-1 || y == 0 || y == height - 1) {
+                    map[x, y] = WALL;
+                } else {
+                    map[x, y] = randomNumberGenerator.Next(0, 100) < randomFillPercent ? WALL : EMPTY;
+                }
             }
         }
+    }
+
+    void SmoothMap() {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int neighbourWallTiles = GetSurroundingWallCount(x, y);
+
+                if(neighbourWallTiles > 4) {
+                    map[x, y] = WALL;
+                } else if(neighbourWallTiles < 4) {
+                    map[x, y] = EMPTY;
+                }
+            }
+        }
+    }
+
+    int GetSurroundingWallCount(int x, int y) {
+        int wallCount = 0;
+
+        for(int neighbourX = x - 1; neighbourX <= x + 1; neighbourX++) {
+            for (int neighbourY = y - 1; neighbourY <= y + 1; neighbourY++) {
+                if(neighbourX >= 0 && neighbourX < width && neighbourY >= 0 && neighbourY < height) {
+                    if (neighbourX != x || neighbourY != y) {
+                        wallCount += map[neighbourX, neighbourY];
+                    }
+                } else {
+                    wallCount++;
+                }
+            } 
+        }
+
+        return wallCount;
     }
 
     void OnDrawGizmos() {
