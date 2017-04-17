@@ -27,6 +27,12 @@ public class MapGenerator : MonoBehaviour {
         }
     }
 
+    void Update() {
+        if(Input.GetButtonUp("Fire1")) {
+            GenerateMap();
+        }
+    }
+
     void RandomFillMap() {
         if(useRandomSeed) {
             seed = Time.time.ToString();
