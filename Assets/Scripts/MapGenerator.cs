@@ -8,9 +8,9 @@ public class MapGenerator : MonoBehaviour {
     public bool useRandomSeed;
 
     [Range(0, 100)]
-	public int randomFillPercent;
+    public int randomFillPercent;
     public int smoothingPasses;
-	public int[,] map;
+    public int[,] map;
 
     private const int EMPTY = 0;
     private const int WALL = 1;
