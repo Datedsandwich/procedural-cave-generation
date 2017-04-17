@@ -25,6 +25,10 @@ public class MapGenerator : MonoBehaviour {
         for(int i = 0; i < smoothingPasses; i++) {
             SmoothMap();
         }
+
+        MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
+
+        meshGenerator.GenerateMesh(map, 1);
     }
 
     void Update() {
@@ -84,6 +88,7 @@ public class MapGenerator : MonoBehaviour {
     }
 
     void OnDrawGizmos() {
+        /*
         if(map != null) {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -93,5 +98,6 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
         }
+        */
     }
 }
